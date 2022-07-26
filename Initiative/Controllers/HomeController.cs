@@ -1,10 +1,16 @@
-﻿using Initiative.Repository;
+﻿#region Using
+
+using Initiative.Repository;
 using Microsoft.AspNetCore.Mvc;
+
+#endregion
 
 namespace Initiative.Controllers
 {
     public class HomeController : Controller
     {
+        #region Injeção de dependências
+
         public readonly MoedaRepository _moeda;
         public readonly ValoresRepository _valores;
         public readonly IConfiguration _configuration;
@@ -16,40 +22,42 @@ namespace Initiative.Controllers
             _configuration = configuration;
         }
 
+        #endregion
+
         public IActionResult Index()
         {
-            string con = _configuration["ConnectionStrings:connection"];
-            var valores = _valores.GetValores(con);
-            var moedas = _moeda.GetMoeda(con);
+            string conexao = _configuration["ConnectionStrings:connection"];
+            var valores = _valores.GetValores(conexao);
+            var moedas = _moeda.GetMoeda(conexao);
             var decomposto = "";
-            int cont;
+            int contador;
 
             foreach (var valor in valores)
             {
                 if (string.IsNullOrEmpty(valor.Decomposto))
                 {
-                    var valorCopy = valor.Valores;
+                    var copiaValor = valor.Valores;
 
                     foreach (var moeda in moedas)
                     {
-                        for (cont = 0; valor.Valores >= moeda.Valor; cont++)
+                        for (contador = 0; valor.Valores >= moeda.Valor; contador++)
                         {
                             valor.Valores -= moeda.Valor;
                         }
 
-                        if (cont > 0)
+                        if (contador > 0)
                         {
-                            decomposto = decomposto + cont + " " + moeda.Formato + "(s) de " + moeda.Descritivo + ";";
+                            decomposto = decomposto + contador + " " + moeda.Formato + "(s) de " + moeda.Descritivo + ";";
                         }
                     }
 
                     valor.Decomposto = decomposto;
-                    valor.Valores = valorCopy;
+                    valor.Valores = copiaValor;
                     decomposto = "";
 
                     foreach (var vlr in valores)
                     {
-                        _valores.AtualizaValores(vlr, con);
+                        _valores.AtualizaValores(vlr, conexao);
                     }
                 }
             }

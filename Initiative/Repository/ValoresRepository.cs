@@ -1,17 +1,23 @@
-﻿using Initiative.Models;
+﻿#region Using
+
+using Initiative.Models;
 using System.Data.Odbc;
+
+#endregion
 
 namespace Initiative.Repository
 {
     public class ValoresRepository
     {
-        public List<ValoresModel> GetValores(string con)
+        #region Consultas
+
+        public List<ValoresModel> GetValores(string conexao)
         {
             var valores = new List<ValoresModel>();
 
             OdbcCommand command = new($@"SELECT * FROM Valores;");
 
-            using (OdbcConnection connection = new(con))
+            using (OdbcConnection connection = new(conexao))
             {
                 command.Connection = connection;
                 connection.Open();
@@ -29,25 +35,32 @@ namespace Initiative.Repository
                         valores.Add(Valore);
                     }
                 };
+
+                connection.Close();
             }
 
             return valores;
         }
 
-        public void AtualizaValores(ValoresModel valores, string con)
-        {
-            OdbcCommand command = new($@"UPDATE Valores SET Decomposto='{valores.Decomposto}' WHERE Valores = {Convert.ToString(valores.Valores).Replace(",", ".")};");
+        #endregion
 
-            using (OdbcConnection connection = new(con))
+        #region Updates
+
+        public void AtualizaValores(ValoresModel valor, string conexao)
+        {
+            OdbcCommand command = new($@"UPDATE Valores SET Decomposto='{valor.Decomposto}' WHERE Valores = {Convert.ToString(valor.Valores).Replace(",", ".")};");
+
+            using (OdbcConnection connection = new(conexao))
             {
                 command.Connection = connection;
                 connection.Open();
 
-                using (var reader = command.ExecuteReader())
-                {
+                using (var reader = command.ExecuteReader()) { }
 
-                }
+                connection.Close();
             }
         }
+
+        #endregion
     }
 }

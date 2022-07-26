@@ -1,17 +1,23 @@
-﻿using Initiative.Models;
+﻿#region Using
+
+using Initiative.Models;
 using System.Data.Odbc;
+
+#endregion
 
 namespace Initiative.Repository
 {
     public class MoedaRepository
     {
-        public List<MoedaModel> GetMoeda(string con)
+        #region Consultas
+
+        public List<MoedaModel> GetMoeda(string conexao)
         {
             var moedas = new List<MoedaModel>();
 
             OdbcCommand command = new($@"SELECT * FROM Moeda ORDER BY Valor DESC;");
 
-            using (OdbcConnection connection = new(con))
+            using (OdbcConnection connection = new(conexao))
             {
                 command.Connection = connection;
                 connection.Open();
@@ -31,9 +37,13 @@ namespace Initiative.Repository
                         moedas.Add(moeda);
                     }
                 };
+
+                connection.Close();
             }
 
             return moedas;
         }
+
+        #endregion
     }
 }
