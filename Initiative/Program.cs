@@ -1,6 +1,11 @@
+﻿using Initiative.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<MoedaRepository>();
+builder.Services.AddScoped<ValoresRepository>();
 
 var app = builder.Build();
 
